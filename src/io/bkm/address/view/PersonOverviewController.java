@@ -4,6 +4,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import io.bkm.address.MainApp;
 import io.bkm.address.model.Person;
 import io.bkm.address.util.DateUtil;
@@ -49,6 +51,33 @@ public class PersonOverviewController {
 		// Initialize the person table with the two columns
 		firstNameColumn.setCellValueFactory(cellData -> cellData.getValue().firstNameProperty());
 		lastNameColumn.setCellValueFactory(cellData -> cellData.getValue().lastNameProperty());
+
+		// Clear person details
+		showPersonDetails(null);
+
+		// Listen for selection changes and show the person details when changed.
+		personTable.getSelectionModel().selectedItemProperty().addListener(
+				(observable, oldValue, newValue) -> showPersonDetails(newValue));
+	}
+
+	/**
+	 * Called when the user clicks on the delete button
+	 */
+	@FXML
+	private void handleDeletePerson() {
+		int selectedIndex = personTable.getSelectionModel().getSelectedIndex();
+		if (selectedIndex >= 0) {
+			personTable.getItems().remove(selectedIndex);
+		} else {
+			// Nothing selected
+			Alert alert = new Alert(AlertType.WARNING);
+			alert.initOwner(mainApp.getPrimaryStage());
+			alert.setTitle("No Selection");
+			alert.setHeaderText("No Person Selected");
+			alert.setContentText("Please select a person in the table.");
+
+			alert.showAndWait();
+		}
 	}
 
 	/**
